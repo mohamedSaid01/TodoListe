@@ -1,5 +1,6 @@
 import './database/index'
 import todoRoutes from './routes/todoRoutes'
+import authRoutes from './routes/authRoutes'
 import  express, {Express, Request , Response} from 'express'
 import  dotenv  from 'dotenv'
 import bodyParser from 'body-parser'
@@ -16,3 +17,4 @@ app.listen(port,() =>
 
 app.use(bodyParser.json()) //bch najm na9ra data eli yab3thheli 
 app.use('/v1/api', todoRoutes)
+app.use('/v1/auth', authRoutes)

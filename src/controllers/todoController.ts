@@ -1,5 +1,7 @@
 import {Request, Response} from 'express'
 import Todo, { ITodo } from '../database/Models/Todo';
+import APIFeatures from '../helpers/apiFeatures';
+import { search } from 'superagent';
 
 export const createTodo = async (req:Request, res:Response): Promise<void> => {
     try{
@@ -71,9 +73,20 @@ export const deleteTodoById = async (req:Request, res:Response): Promise<void> =
 
 export const findAllTodo = async (req:Request, res:Response): Promise<void> => {
     try{
-        const todos = await Todo.find(); 
+        const {page = 1 , limite = 10}= req.query
+        const options={
+            page:parseInt(page as string),
+            limit:parseInt(limite as string)
+        }
+        let findAllQuery = Todo.find()
+        const features = new APIFeatures(
+            findAllQuery,
+            req.query 
+        ).filter().sort().limitFields().search(['title'])
+
+        const paaginateTodos = await Todo.paginate(features?.query, options); 
         res.status(200).json({
-            todos: todos,
+            todos: paaginateTodos,
             message: 'Todos retourned successfully'
         });
     }
